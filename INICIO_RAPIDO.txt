@@ -1,0 +1,180 @@
+═════════════════════════════════════════════════════════════════════════════════
+🚀 TREGO - INICIO RÁPIDO (GitHub + Railway)
+═════════════════════════════════════════════════════════════════════════════════
+
+TIENES TODO LISTO. Aquí están los 3 pasos:
+
+═════════════════════════════════════════════════════════════════════════════════
+✅ PASO 1: SUBIR A GITHUB (5 minutos)
+═════════════════════════════════════════════════════════════════════════════════
+
+1. Crea un nuevo repo en GitHub.com llamado "trego"
+   (o github.com/TU_USER/trego)
+
+2. En terminal (en la carpeta de Trego):
+   
+   git init
+   git add .
+   git commit -m "Initial commit: Trego sistema de liquidaciones"
+   git remote add origin https://github.com/TU_USER/trego.git
+   git branch -M main
+   git push -u origin main
+
+   (Reemplaza TU_USER por tu usuario de GitHub)
+
+3. ✓ Código está en GitHub
+
+═════════════════════════════════════════════════════════════════════════════════
+✅ PASO 2: CONECTAR A RAILWAY (3 minutos)
+═════════════════════════════════════════════════════════════════════════════════
+
+1. Ve a https://railway.app y crea cuenta (o login)
+
+2. Click "New Project" → "Deploy from GitHub"
+
+3. Conecta tu cuenta GitHub
+
+4. Selecciona repo "trego"
+
+5. Click "Deploy"
+   (Railway automáticamente detecta package.json y Procfile)
+
+6. Espera 2-3 minutos a que termine el build
+
+═════════════════════════════════════════════════════════════════════════════════
+✅ PASO 3: CONFIGURAR VARIABLES (2 minutos)
+═════════════════════════════════════════════════════════════════════════════════
+
+En Railway Dashboard (tu proyecto):
+
+1. Pestaña "Variables"
+
+2. Agrega variable:
+   Name: MONDAY_API_KEY
+   Value: eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjY3NjA3MjY1MCwiYWFpIjoxMSwidWlkIjoxMDY1MDM4MzAsImlhZCI6IjIwMjYtMDYtMjdUMTY6MjY6NDguMDAwWiIsInBlciI6Im1lOndyaXRlIiwiYWN0aWQiOjM1NzIxNjYxLCJyZ24iOiJ1c2UxIn0.ZjoCepGV2-ml_zDKMNGWLCqANaPsl7LDaxfPKSm3Zbo
+
+3. Agrega variable:
+   Name: NODE_ENV
+   Value: production
+
+4. Click "Save"
+
+5. Railway redeploya automáticamente (30 segundos)
+
+═════════════════════════════════════════════════════════════════════════════════
+✅ LISTO!
+═════════════════════════════════════════════════════════════════════════════════
+
+Tu app está en producción.
+
+Railway te dio una URL tipo:
+  https://trego-production.up.railway.app
+
+Guarda esa URL.
+
+═════════════════════════════════════════════════════════════════════════════════
+🔗 ACTUALIZAR DASHBOARD (1 minuto)
+═════════════════════════════════════════════════════════════════════════════════
+
+En archivo dashboard-v2.html:
+
+Busca la línea:
+  const API_URL = 'http://localhost:3001/api';
+
+Reemplázala por (con tu URL real):
+  const API_URL = 'https://trego-production.up.railway.app/api';
+
+Luego:
+  git add dashboard-v2.html
+  git commit -m "Update API URL for Railway"
+  git push origin main
+
+Railway redeploya automáticamente.
+
+═════════════════════════════════════════════════════════════════════════════════
+✅ VERIFICAR QUE FUNCIONA
+═════════════════════════════════════════════════════════════════════════════════
+
+En navegador, abre:
+
+  https://trego-production.up.railway.app/api/clientes
+
+Debería mostrar JSON con tus 5 clientes.
+
+Si funciona, ya está. 🎉
+
+═════════════════════════════════════════════════════════════════════════════════
+📝 PRUEBAS RÁPIDAS
+═════════════════════════════════════════════════════════════════════════════════
+
+Test 1: Health check
+  https://trego-production.up.railway.app/health
+  → Debe devolver: {"status":"ok",...}
+
+Test 2: Clientes
+  https://trego-production.up.railway.app/api/clientes
+  → Debe devolver 5 clientes en JSON
+
+Test 3: Dashboard
+  Abre dashboard-v2.html en navegador
+  → Click "🔄 Sincronizar"
+  → Debe conectar con Railway sin errores
+
+═════════════════════════════════════════════════════════════════════════════════
+📚 DOCUMENTACIÓN (LÉELO DESPUÉS)
+═════════════════════════════════════════════════════════════════════════════════
+
+Para entender mejor qué pasó:
+  - README_GITHUB.md: Toda la documentación
+  - DEPLOYMENT_RAILWAY.md: Deployment a detalle
+  - CHECKLIST_GITHUB_RAILWAY.md: Paso a paso completo
+
+═════════════════════════════════════════════════════════════════════════════════
+🔄 WORKFLOW FUTURO (después del setup)
+═════════════════════════════════════════════════════════════════════════════════
+
+Cada vez que quieras hacer cambios:
+
+1. Edita archivos localmente
+2. Prueba: npm start
+3. Commit: git add . && git commit -m "tu descripción"
+4. Push: git push origin main
+5. Railway redeploya automáticamente en 1-2 min
+6. Tu app está actualizada en producción
+
+═════════════════════════════════════════════════════════════════════════════════
+💚 COSTOS
+═════════════════════════════════════════════════════════════════════════════════
+
+Railway: $0-5 USD/mes
+GitHub: Gratis
+Total: Gratis-5 USD/mes
+
+═════════════════════════════════════════════════════════════════════════════════
+❓ ¿ALGO NO FUNCIONA?
+═════════════════════════════════════════════════════════════════════════════════
+
+En Railway Dashboard:
+  1. Ve a tu proyecto
+  2. Pestaña "Deployments"
+  3. Click en último deployment
+  4. Mira "Logs"
+  5. Busca el error
+
+Errores comunes:
+  - "Cannot find module" → Falta npm install
+  - "Cannot GET /api" → Backend no arrancó
+  - "Monday API error" → API Key inválida
+
+═════════════════════════════════════════════════════════════════════════════════
+🎉 ¡ESO ES TODO!
+═════════════════════════════════════════════════════════════════════════════════
+
+Trego está en producción en Railway.
+URL pública funciona 24/7.
+Auto-deploy en cada git push.
+Tu equipo puede usar desde cualquier lugar.
+
+¿Preguntas? Revisa los .md files o me llamas.
+
+═════════════════════════════════════════════════════════════════════════════════

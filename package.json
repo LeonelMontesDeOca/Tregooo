@@ -1,0 +1,29 @@
+{
+  "name": "trego",
+  "version": "1.0.0",
+  "description": "Sistema de liquidaciones para empresa de mensajería",
+  "main": "trego-backend.js",
+  "scripts": {
+    "start": "node trego-backend.js",
+    "dev": "node trego-backend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "liquidaciones",
+    "mensajería",
+    "monday",
+    "dashboard"
+  ],
+  "author": "Trego",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trego - Dashboard de Liquidaciones</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 12px;
+      border: 1px solid #475569;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #64748b;
+      cursor: not-allowed;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #475569;
+    }
+
+    .btn-secondary:hover {
+      background: #334155;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #334155;
+    }
+
+    .tab-button {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-button.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #f1f5f9;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .table-wrapper {
+      background: #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #475569;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #0f172a;
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: #cbd5e1;
+      border-bottom: 2px solid #475569;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #334155;
+      font-size: 14px;
+    }
+
+    tr:hover {
+      background: #0f172a;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #064e3b;
+      color: #bbf7d0;
+    }
+
+    .monto {
+      font-family: 'Monaco', monospace;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .positivo {
+      color: #10b981;
+    }
+
+    .negativo {
+      color: #ef4444;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-buttons button {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #64748b;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid #475569;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      border-left: 4px solid;
+    }
+
+    .alert-success {
+      background: #064e3b;
+      border-left-color: #10b981;
+      color: #bbf7d0;
+    }
+
+    .alert-error {
+      background: #7c2d12;
+      border-left-color: #ef4444;
+      color: #fecaca;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #475569;
+      border-top-color: #3b82f6;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 6px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .stat-card.deuda {
+      border-left-color: #ef4444;
+    }
+
+    .stat-card.favor {
+      border-left-color: #10b981;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('dashboard');
+      const [clientes, setClientes] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [syncing, setSyncing] = useState(false);
+      const [message, setMessage] = useState('');
+      const [messageType, setMessageType] = useState('');
+
+      const [formData, setFormData] = useState({ nombre: '', board_id: '', email: '' });
+      const [editingId, setEditingId] = useState(null);
+      const [showModal, setShowModal] = useState(false);
+
+      const API_URL = 'http://localhost:3001/api';
+
+      useEffect(() => {
+        cargarClientes();
+      }, []);
+
+      async function cargarClientes() {
+        setLoading(true);
+        try {
+          const res = await fetch(`${API_URL}/clientes`);
+          if (!res.ok) throw new Error('Error cargando clientes');
+          const data = await res.json();
+          setClientes(data || []);
+        } catch (error) {
+          mostrarMensaje('Error cargando clientes', 'error');
+        }
+        setLoading(false);
+      }
+
+      function mostrarMensaje(msg, tipo = 'success') {
+        setMessage(msg);
+        setMessageType(tipo);
+        setTimeout(() => setMessage(''), 3000);
+      }
+
+      async function sincronizar() {
+        setSyncing(true);
+        try {
+          const res = await fetch(`${API_URL}/sincronizar`, { method: 'POST' });
+          if (!res.ok) throw new Error('Error sincronizando');
+          const data = await res.json();
+          await cargarClientes();
+          mostrarMensaje(`✓ Sincronizado: ${data.resultados?.length || 0} clientes`);
+        } catch (error) {
+          mostrarMensaje('Error sincronizando: ' + error.message, 'error');
+        }
+        setSyncing(false);
+      }
+
+      async function guardarCliente(e) {
+        e.preventDefault();
+        if (!formData.nombre || !formData.board_id) {
+          mostrarMensaje('Nombre y Board ID requeridos', 'error');
+          return;
+        }
+
+        try {
+          let res;
+          if (editingId) {
+            res = await fetch(`${API_URL}/cliente/${editingId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+            });
+          } else {
+            res = await fetch(`${API_URL}/cliente`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData)
+            });
+          }
+
+          if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.error || 'Error guardando');
+          }
+
+          await cargarClientes();
+          setFormData({ nombre: '', board_id: '', email: '' });
+          setEditingId(null);
+          setShowModal(false);
+          mostrarMensaje(editingId ? 'Cliente actualizado' : 'Cliente agregado');
+        } catch (error) {
+          mostrarMensaje(error.message, 'error');
+        }
+      }
+
+      async function eliminarCliente(id) {
+        if (!confirm('¿Eliminar este cliente?')) return;
+
+        try {
+          const res = await fetch(`${API_URL}/cliente/${id}`, { method: 'DELETE' });
+          if (!res.ok) throw new Error('Error eliminando');
+          await cargarClientes();
+          mostrarMensaje('Cliente eliminado');
+        } catch (error) {
+          mostrarMensaje('Error eliminando: ' + error.message, 'error');
+        }
+      }
+
+      function editarCliente(cliente) {
+        setFormData({ nombre: cliente.nombre, board_id: cliente.board_id, email: cliente.email });
+        setEditingId(cliente.id);
+        setShowModal(true);
+      }
+
+      function abrirNuevo() {
+        setFormData({ nombre: '', board_id: '', email: '' });
+        setEditingId(null);
+        setShowModal(true);
+      }
+
+      const totalLiquidar = clientes.reduce((s, c) => s + (c.saldo_actual || 0), 0);
+      const totalDeuda = clientes.filter(c => (c.saldo_actual || 0) > 0).reduce((s, c) => s + c.saldo_actual, 0);
+      const totalFavor = clientes.filter(c => (c.saldo_actual || 0) < 0).reduce((s, c) => s + Math.abs(c.saldo_actual), 0);
+
+      return (
+        <div className="container">
+          <header>
+            <h1>📊 Trego - Liquidaciones</h1>
+            <div className="header-actions">
+              <button className="btn-primary" onClick={sincronizar} disabled={syncing || loading}>
+                {syncing ? <><span className="spinner"></span>Sincronizando...</> : '🔄 Sincronizar'}
+              </button>
+              <button className="btn-success" onClick={abrirNuevo}>
+                ➕ Nuevo Cliente
+              </button>
+            </div>
+          </header>
+
+          {message && <div className={`alert alert-${messageType}`}>{message}</div>}
+
+          <div className="tabs">
+            <button className={`tab-button ${activeTab === 'dashboard' ? 'active' : ''}`} onClick={() => setActiveTab('dashboard')}>
+              📊 Dashboard
+            </button>
+            <button className={`tab-button ${activeTab === 'clientes' ? 'active' : ''}`} onClick={() => setActiveTab('clientes')}>
+              👥 Gestión de Clientes
+            </button>
+          </div>
+
+          {/* TAB: Dashboard */}
+          <div className={`tab-content ${activeTab === 'dashboard' ? 'active' : ''}`}>
+            <div className="stats">
+              <div className="stat-card">
+                <div className="stat-label">Total a Liquidar</div>
+                <div className="stat-value">Q{totalLiquidar.toFixed(2)}</div>
+              </div>
+              <div className="stat-card deuda">
+                <div className="stat-label">Deuda de Clientes</div>
+                <div className="stat-value">Q{totalDeuda.toFixed(2)}</div>
+              </div>
+              <div className="stat-card favor">
+                <div className="stat-label">Saldo a Favor</div>
+                <div className="stat-value">Q{totalFavor.toFixed(2)}</div>
+              </div>
+            </div>
+
+            <div className="table-wrapper">
+              {clientes.length === 0 ? (
+                <div className="empty-state">
+                  <p>No hay clientes configurados</p>
+                  <p style={{ fontSize: '12px', marginTop: '8px' }}>Agrega uno en "Gestión de Clientes"</p>
+                </div>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Board ID</th>
+                      <th>Monto a Liquidar</th>
+                      <th>Último Update</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clientes.map(cliente => (
+                      <tr key={cliente.id}>
+                        <td>{cliente.nombre}</td>
+                        <td><code style={{ fontSize: '12px', color: '#94a3b8' }}>{cliente.board_id}</code></td>
+                        <td>
+                          <span className={`monto ${cliente.saldo_actual > 0 ? 'negativo' : 'positivo'}`}>
+                            Q{(cliente.saldo_actual || 0).toFixed(2)}
+                          </span>
+                        </td>
+                        <td style={{ fontSize: '12px', color: '#94a3b8' }}>
+                          {cliente.fecha_actualizado ? new Date(cliente.fecha_actualizado).toLocaleString('es-GT') : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
+          {/* TAB: Gestión de Clientes */}
+          <div className={`tab-content ${activeTab === 'clientes' ? 'active' : ''}`}>
+            <div className="table-wrapper">
+              {clientes.length === 0 ? (
+                <div className="empty-state">
+                  <p>No hay clientes</p>
+                </div>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Board ID</th>
+                      <th>Email</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clientes.map(cliente => (
+                      <tr key={cliente.id}>
+                        <td>{cliente.nombre}</td>
+                        <td><code style={{ fontSize: '12px' }}>{cliente.board_id}</code></td>
+                        <td style={{ fontSize: '13px', color: '#94a3b8' }}>{cliente.email || '-'}</td>
+                        <td>
+                          <span className={`status-badge ${cliente.activo ? 'status-active' : ''}`}>
+                            {cliente.activo ? 'Activo' : 'Inactivo'}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                            <button className="btn-secondary" onClick={() => editarCliente(cliente)}>
+                              ✏️ Editar
+                            </button>
+                            <button className="btn-danger" onClick={() => eliminarCliente(cliente.id)}>
+                              ❌ Eliminar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
+          {/* MODAL: Agregar/Editar Cliente */}
+          {showModal && (
+            <div className="modal" onClick={() => setShowModal(false)}>
+              <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <h2>{editingId ? '✏️ Editar Cliente' : '➕ Nuevo Cliente'}</h2>
+                <form onSubmit={guardarCliente}>
+                  <div className="form-group">
+                    <label>Nombre del Cliente</label>
+                    <input
+                      type="text"
+                      value={formData.nombre}
+                      onChange={e => setFormData({ ...formData, nombre: e.target.value })}
+                      placeholder="Ej: Natural Shop"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Board ID (Monday)</label>
+                    <input
+                      type="text"
+                      value={formData.board_id}
+                      onChange={e => setFormData({ ...formData, board_id: e.target.value })}
+                      placeholder="Ej: 18419421965"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Email (opcional)</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="contacto@example.com"
+                    />
+                  </div>
+                  <div className="modal-actions">
+                    <button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>
+                      Cancelar
+                    </button>
+                    <button type="submit" className="btn-primary">
+                      {editingId ? 'Actualizar' : 'Agregar'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
