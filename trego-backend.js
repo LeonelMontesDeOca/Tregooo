@@ -230,6 +230,84 @@ app.get('/api/cliente/:nombre', (req, res) => {
   );
 });
 
+// Contar paquetes por rango de fechas
+app.get('/api/estadisticas', async (req, res) => {
+  const { fechaInicio, fechaFin } = req.query;
+
+  try {
+    const config = JSON.parse(fs.readFileSync('./clientes.json', 'utf8'));
+    let totalPaquetes = 0;
+
+    for (const cliente of config.clientes) {
+      const items = await obtenerItemsDelGrupoPendientes(cliente.board_id, fechaInicio, fechaFin);
+      totalPaquetes += items.length;
+    }
+
+    res.json({
+      success: true,
+      totalPaquetes,
+      fechaInicio,
+      fechaFin,
+      fecha: new Date()
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+async function obtenerItemsDelGrupoPendientes(boardId, fechaInicio, fechaFin) {
+  try {
+    const query = `
+      query($board_id: String!) {
+        boards(ids: [$board_id]) {
+          groups(ids: ["new_group29179"]) {
+            items_page {
+              items {
+                id
+                name
+                column_values {
+                  id
+                  text
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await axios.post(
+      MONDAY_API_URL,
+      { query },
+      { headers: { Authorization: `Bearer ${MONDAY_TOKEN}` } }
+    );
+
+    let items = response.data.data?.boards[0]?.groups[0]?.items_page?.items || [];
+
+    // Filtrar por fecha si se proporciona
+    if (fechaInicio || fechaFin) {
+      items = items.filter(item => {
+        const fechaCol = item.column_values.find(col => col.id === 'date_mm4kbb00');
+        if (!fechaCol) return false;
+
+        const itemFecha = new Date(fechaCol.text || fechaCol.value);
+        const inicio = fechaInicio ? new Date(fechaInicio) : null;
+        const fin = fechaFin ? new Date(fechaFin) : null;
+
+        if (inicio && itemFecha < inicio) return false;
+        if (fin && itemFecha > fin) return false;
+        return true;
+      });
+    }
+
+    return items;
+  } catch (error) {
+    console.error(`Error obteniendo items del grupo Pendientes para board ${boardId}:`, error.message);
+    return [];
+  }
+}
+
 // Agregar nuevo cliente
 app.post('/api/cliente', (req, res) => {
   const { nombre, board_id, email } = req.body;
