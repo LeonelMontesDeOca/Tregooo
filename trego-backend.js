@@ -53,11 +53,11 @@ function initDB() {
 
 // ============ QUERIES A MONDAY ============
 
-// Query para obtener items de un board (grupo "Completo" + con fecha)
+// Query para obtener items de un board (grupo "Entregado")
 const QUERY_ITEMS = `
   query($board_id: String!) {
     boards(ids: [$board_id]) {
-      items_page(query_params: {rules: [{column_id: "project_status", compare_value: ["Completo"]}]}) {
+      items_page(query_params: {rules: [{column_id: "project_status", compare_value: ["Entregado"]}]}) {
         items {
           id
           name
