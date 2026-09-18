@@ -1,0 +1,24 @@
+{
+  "clientes": [
+    {
+      "nombre": "Decoplate 1",
+      "board_id": "1234567890"
+    },
+    {
+      "nombre": "Decoplate 2",
+      "board_id": "1234567891"
+    },
+    {
+      "nombre": "La Belle Parfum",
+      "board_id": "1234567892"
+    },
+    {
+      "nombre": "Natural Shop",
+      "board_id": "1234567893"
+    },
+    {
+      "nombre": "Panchos Kitchen",
+      "board_id": "1234567894"
+    }
+  ]
+}
