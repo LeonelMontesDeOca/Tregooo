@@ -386,6 +386,12 @@
       const [syncing, setSyncing] = useState(false);
       const [message, setMessage] = useState('');
       const [messageType, setMessageType] = useState('');
+      const [totalPaquetes, setTotalPaquetes] = useState(0);
+
+      // Fechas por defecto: HOY
+      const hoy = new Date().toISOString().split('T')[0];
+      const [fechaInicio, setFechaInicio] = useState(hoy);
+      const [fechaFin, setFechaFin] = useState(hoy);
 
       const [formData, setFormData] = useState({ nombre: '', board_id: '', email: '' });
       const [editingId, setEditingId] = useState(null);
@@ -395,7 +401,8 @@
 
       useEffect(() => {
         cargarClientes();
-      }, []);
+        cargarEstadisticas();
+      }, [fechaInicio, fechaFin]);
 
       async function cargarClientes() {
         setLoading(true);
@@ -414,6 +421,19 @@
         setMessage(msg);
         setMessageType(tipo);
         setTimeout(() => setMessage(''), 3000);
+      }
+
+      async function cargarEstadisticas() {
+        try {
+          const url = `${API_URL.replace('/api', '')}/api/estadisticas?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.success) {
+            setTotalPaquetes(data.totalPaquetes || 0);
+          }
+        } catch (error) {
+          console.error('Error cargando estadísticas:', error);
+        }
       }
 
       async function sincronizar() {
@@ -524,10 +544,20 @@
 
           {/* TAB: Dashboard */}
           <div className={`tab-content ${activeTab === 'dashboard' ? 'active' : ''}`}>
+            <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <label style={{ color: '#94a3b8' }}>
+                De:
+                <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} style={{ marginLeft: '8px', padding: '8px', borderRadius: '6px', border: '1px solid #475569', background: '#1e293b', color: '#e2e8f0' }} />
+              </label>
+              <label style={{ color: '#94a3b8' }}>
+                Hasta:
+                <input type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} style={{ marginLeft: '8px', padding: '8px', borderRadius: '6px', border: '1px solid #475569', background: '#1e293b', color: '#e2e8f0' }} />
+              </label>
+            </div>
             <div className="stats">
               <div className="stat-card">
-                <div className="stat-label">Total a Liquidar</div>
-                <div className="stat-value">Q{totalLiquidar.toFixed(2)}</div>
+                <div className="stat-label">Paquetes Pendientes</div>
+                <div className="stat-value">{totalPaquetes}</div>
               </div>
               <div className="stat-card deuda">
                 <div className="stat-label">Deuda de Clientes</div>
