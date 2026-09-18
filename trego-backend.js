@@ -53,11 +53,11 @@ function initDB() {
 
 // ============ QUERIES A MONDAY ============
 
-// Query para obtener items de un board (grupo "Completo")
+// Query para obtener items de un board (grupo "Completo" + con fecha)
 const QUERY_ITEMS = `
   query($board_id: String!) {
     boards(ids: [$board_id]) {
-      items_page(query_params: {rules: [{column_id: "status", compare_value: ["Completo"]}]}) {
+      items_page(query_params: {rules: [{column_id: "project_status", compare_value: ["Completo"]}]}) {
         items {
           id
           name
@@ -95,9 +95,15 @@ async function obtenerItemsDelBoard(boardId) {
 }
 
 function extraerMontoLiquidar(columnValues) {
-  // Buscar la columna "Monto a Liquidar"
-  const montoCol = columnValues.find(col => col.id === 'monto_a_liquidar' || col.text?.includes('Liquidar'));
+  // Buscar la columna de monto (formula_mm4n1nkb)
+  const montoCol = columnValues.find(col => col.id === 'formula_mm4n1nkb');
   return montoCol ? parseFloat(montoCol.text || montoCol.value) || 0 : 0;
+}
+
+function extraerFecha(columnValues) {
+  // Buscar la columna de fecha (date_mm4kbb00)
+  const fechaCol = columnValues.find(col => col.id === 'date_mm4kbb00');
+  return fechaCol ? fechaCol.text : 'Sin fecha';
 }
 
 async function sincronizarCliente(clienteNombre, boardId) {
