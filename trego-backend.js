@@ -95,9 +95,14 @@ async function obtenerItemsDelBoard(boardId) {
 }
 
 function extraerMontoLiquidar(columnValues) {
-  // Buscar la columna de monto (formula_mm4n1nkb)
+  // Buscar la columna de monto (formula_mm4n1nkb) - puede ser fórmula
   const montoCol = columnValues.find(col => col.id === 'formula_mm4n1nkb');
-  return montoCol ? parseFloat(montoCol.text || montoCol.value) || 0 : 0;
+  if (!montoCol) return 0;
+
+  // Extraer número de string (soporta moneda, espacios, etc)
+  const valor = montoCol.text || montoCol.value || '';
+  const numeros = valor.toString().replace(/[^0-9.-]/g, '');
+  return parseFloat(numeros) || 0;
 }
 
 function extraerFecha(columnValues) {
