@@ -95,14 +95,26 @@ async function obtenerItemsDelBoard(boardId) {
 }
 
 function extraerMontoLiquidar(columnValues) {
-  // Buscar la columna de monto (formula_mm4n1nkb) - puede ser fórmula
+  // Opción 1: Intentar con la fórmula (formula_mm4n1nkb)
   const montoCol = columnValues.find(col => col.id === 'formula_mm4n1nkb');
-  if (!montoCol) return 0;
+  if (montoCol) {
+    const valor = montoCol.text || montoCol.value || '';
+    const numeros = valor.toString().replace(/[^0-9.-]/g, '');
+    const monto = parseFloat(numeros);
+    if (!isNaN(monto) && monto > 0) return monto;
+  }
 
-  // Extraer número de string (soporta moneda, espacios, etc)
-  const valor = montoCol.text || montoCol.value || '';
-  const numeros = valor.toString().replace(/[^0-9.-]/g, '');
-  return parseFloat(numeros) || 0;
+  // Opción 2: Calcular Monto a Cobrar - Costo de Envío
+  const montoCobrarCol = columnValues.find(col => col.id === 'numeric_mm4k8bpd');
+  const costoEnvioCol = columnValues.find(col => col.id === 'numeric_mm4ky2am');
+
+  if (montoCobrarCol && costoEnvioCol) {
+    const montoCobrar = parseFloat(montoCobrarCol.text || montoCobrarCol.value) || 0;
+    const costoEnvio = parseFloat(costoEnvioCol.text || costoEnvioCol.value) || 0;
+    return montoCobrar - costoEnvio;
+  }
+
+  return 0;
 }
 
 function extraerFecha(columnValues) {
