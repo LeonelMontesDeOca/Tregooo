@@ -213,6 +213,24 @@ app.get('/api/cliente/:nombre', (req, res) => {
   );
 });
 
+// Agregar nuevo cliente
+app.post('/api/cliente', (req, res) => {
+  const { nombre, board_id, email } = req.body;
+
+  if (!nombre || !board_id) {
+    return res.status(400).json({ error: 'nombre y board_id son requeridos' });
+  }
+
+  db.run(
+    `INSERT INTO clientes (nombre, board_id, email, saldo_actual) VALUES (?, ?, ?, 0)`,
+    [nombre, board_id, email || null],
+    function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ success: true, cliente_id: this.lastID, nombre, board_id });
+    }
+  );
+});
+
 // Marcar como liquidado
 app.post('/api/liquidar/:nombre', (req, res) => {
   const { nombre } = req.params;
@@ -231,7 +249,7 @@ app.post('/api/liquidar/:nombre', (req, res) => {
         [cliente.id, monto, 'liquidado', notas],
         function(err) {
           if (err) return res.status(500).json({ error: err.message });
-          
+
           // Actualizar saldo a 0
           db.run(
             `UPDATE clientes SET saldo_actual = 0 WHERE id = ?`,
