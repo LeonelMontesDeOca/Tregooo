@@ -235,8 +235,8 @@ app.get('/api/debug-pendientes', async (req, res) => {
   try {
     const boardId = '18419421965';
     const query = `
-      query($board_id: String!) {
-        boards(ids: [$board_id]) {
+      query {
+        boards(ids: ["${boardId}"]) {
           groups(ids: ["new_group29179"]) {
             title
             items_page {
@@ -295,8 +295,8 @@ app.get('/api/estadisticas', async (req, res) => {
 async function obtenerItemsDelGrupoPendientes(boardId, fechaInicio, fechaFin) {
   try {
     const query = `
-      query($board_id: String!) {
-        boards(ids: [$board_id]) {
+      query {
+        boards(ids: ["${boardId}"]) {
           groups(ids: ["new_group29179"]) {
             items_page {
               items {
