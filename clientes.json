@@ -1,24 +1,28 @@
 {
   "clientes": [
     {
-      "nombre": "Decoplate 1",
-      "board_id": "1234567890"
-    },
-    {
-      "nombre": "Decoplate 2",
-      "board_id": "1234567891"
-    },
-    {
-      "nombre": "La Belle Parfum",
-      "board_id": "1234567892"
-    },
-    {
       "nombre": "Natural Shop",
-      "board_id": "1234567893"
+      "board_id": "18419421965"
+    },
+    {
+      "nombre": "AT Supermarket Fit",
+      "board_id": "18419032424"
     },
     {
       "nombre": "Panchos Kitchen",
-      "board_id": "1234567894"
+      "board_id": "18421178886"
+    },
+    {
+      "nombre": "De Macho a Macho",
+      "board_id": "18425353642"
+    },
+    {
+      "nombre": "La Belle Parfum GT",
+      "board_id": "18427952419"
+    },
+    {
+      "nombre": "Decoplate",
+      "board_id": "18425989533"
     }
   ]
 }
