@@ -267,6 +267,11 @@ function cargarClientesIniciales() {
   });
 }
 
+// ============ SERVE DASHBOARD ============
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/dashboard-v2.html');
+});
+
 // ============ HEALTH CHECK ============
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });
