@@ -230,6 +230,43 @@ app.get('/api/cliente/:nombre', (req, res) => {
   );
 });
 
+// DEBUG: Ver qué devuelve Monday.com
+app.get('/api/debug-pendientes', async (req, res) => {
+  try {
+    const boardId = '18419421965';
+    const query = `
+      query($board_id: String!) {
+        boards(ids: [$board_id]) {
+          groups(ids: ["new_group29179"]) {
+            title
+            items_page {
+              items {
+                id
+                name
+                column_values {
+                  id
+                  text
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await axios.post(
+      MONDAY_API_URL,
+      { query },
+      { headers: { Authorization: `Bearer ${MONDAY_TOKEN}` } }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Contar paquetes por rango de fechas
 app.get('/api/estadisticas', async (req, res) => {
   const { fechaInicio, fechaFin } = req.query;
